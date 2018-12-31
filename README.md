@@ -20,8 +20,20 @@ python ttl2sif.py -i /data/noctua-models/models/ -a gocam-sif.zip -l -d
 
 ## SIF files
 * Documentation about the [SIF Format](http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html)
-* SIF files can be viewed with [cytoscape](https://cytoscape.org)
-* They can also be exported with cytoscape as a web application as in the following [example](http://gocams-sif.s3-website-us-west-1.amazonaws.com/#/)
+* SIF files can be viewed with [Cytoscape](https://cytoscape.org)
+* They can also be exported with Cytoscape as a web application as in the following [example](http://gocams-sif.s3-website-us-west-1.amazonaws.com/#/)
+
+### View SIF in Cytoscape
+We advise using our [styling](#) in Cytoscape for a better rendering of the GO-CAM graphs.
+
+### Multiple vs Single instance of an entity
+In the following example, the `-d` parameter was used, hence the two instances of the gene Pear1 Mmus appear as two separate nodes:
+![GO-CAM-SIF in CytoScape with multiple instances of an entity](GO-CAM-SIF-cytoscape-d.png)
+
+Whereas in this same example, all instances of a same entity (e.g. 'Pear 1 Mmus') have been merged in a single node:
+![GO-CAM-SIF in CytoScape with at most one instance of an entity](GO-CAM-SIF-cytoscape-d.png)
+
+
 
 ## Additional Notes
 * GO-CAM TTL files made from [Noctua](http://noctua.geneontology.org) can be retrieved here: [https://github.com/geneontology/noctua-models/tree/master/models](https://github.com/geneontology/noctua-models/tree/master/models).
