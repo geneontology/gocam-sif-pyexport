@@ -13,4 +13,4 @@ python ttl2sif.py -i <input:directory> [-o <output:directory> -a <output:archive
 ## SIF files
 * Documentation about the [SIF Format](http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html)
 * SIF files can be viewed with [cytoscape](https://cytoscape.org)
-* They can also be exported with cytoscape as a web application ([example](http://gocams-sif.s3-website-us-west-1.amazonaws.com/#/){:target="blank"})
+* They can also be exported with cytoscape as a web application as in the following [example](http://gocams-sif.s3-website-us-west-1.amazonaws.com/#/)
