@@ -7,8 +7,11 @@ python ttl2sif.py -i <input:directory> [-o <output:directory> -a <output:archive
 ```
 
 ### Parameters
+* `i`: input directory containing GO-CAM TTL files
+* `o`: output directory to save the GO-CAM SIF files
+* `a`: zip filename to store all the GO-CAM SIF files
 * `l`: try to convert URIs in human readable labels
-* `d`: when true, if a given entity (e.g. GO term) has multiple instances, the name will also be duplicated _2, _3, etc, so that it appears as different nodes in the SIF format
+* `d`: when true, if a given entity (e.g. GO term) has multiple instances, the entity name will also be duplicated _2, _3, etc, so that it appears as different nodes in the SIF format
 
 ## SIF files
 * Documentation about the [SIF Format](http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html)
