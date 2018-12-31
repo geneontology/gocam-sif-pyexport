@@ -1,5 +1,5 @@
-# gocam-sif-pyexport
-Export GO-CAMs to SIF
+# # GOCAM export to SIF
+Export GO-CAMs to SIF in Python
 
 ## Usage
 ```
@@ -28,10 +28,10 @@ We advise using our [styling](#) in Cytoscape for a better rendering of the GO-C
 
 ### Multiple vs Single instance of an entity
 In the following example, the `-d` parameter was used, hence the two instances of the gene Pear1 Mmus appear as two separate nodes:
-![GO-CAM-SIF in CytoScape with multiple instances of an entity](GO-CAM-SIF-cytoscape-d.png)
+![GO-CAM-SIF in CytoScape with multiple instances of an entity](images/GO-CAM-SIF-cytoscape-d.png)
 
 Whereas in this same example, all instances of a same entity (e.g. 'Pear 1 Mmus') have been merged in a single node:
-![GO-CAM-SIF in CytoScape with at most one instance of an entity](GO-CAM-SIF-cytoscape-d.png)
+![GO-CAM-SIF in CytoScape with at most one instance of an entity](images/GO-CAM-SIF-cytoscape-d.png)
 
 
 
