@@ -26,12 +26,12 @@ python ttl2sif.py -i /data/noctua-models/models/ -a gocam-sif.zip -l -d
 ### View SIF in Cytoscape
 We advise using our [styling](#) in Cytoscape for a better rendering of the GO-CAM graphs.
 
-### Multiple vs Single instance of an entity
-In the following example, the `-d` parameter was used, hence the two instances of the gene Pear1 Mmus appear as two separate nodes:
+### Multiple vs single instance of an entity
+In the following example, the `-d` parameter was used, hence the two instances of the gene `Pear1 Mmus` appears as two separate nodes:
 ![GO-CAM-SIF in CytoScape with multiple instances of an entity](images/GO-CAM-SIF-cytoscape-d.png)
 
-Whereas in this same example, all instances of a same entity (e.g. 'Pear 1 Mmus') have been merged in a single node:
-![GO-CAM-SIF in CytoScape with at most one instance of an entity](images/GO-CAM-SIF-cytoscape-d.png)
+Whereas in this same example, all instances of a same entity (e.g. `Pear 1 Mmus`) have been merged in a single node:
+![GO-CAM-SIF in CytoScape with at most one instance of an entity](images/GO-CAM-SIF-cytoscape.png)
 
 
 
