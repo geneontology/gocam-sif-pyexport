@@ -1,4 +1,4 @@
-# # GOCAM export to SIF
+# GOCAM export to SIF
 Export GO-CAMs to SIF in Python
 
 ## Usage
