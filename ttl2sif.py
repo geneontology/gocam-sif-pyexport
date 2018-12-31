@@ -160,10 +160,8 @@ def main(argv):
         log("Output SIF:            \t" + output_sif)
     if archive:
         log("Archive:               \t" + archive)
-    if use_labels:
-        log("Use labels:            \t" + str(use_labels))
-    if duplicate_instances:
-        log("Duplicate instances:   \t" + str(duplicate_instances))
+    log("Use labels:            \t" + str(use_labels))
+    log("Duplicate instances:   \t" + str(duplicate_instances))
 
     # Then start initializing CurieUtil and Ontologies
     initCurieUtil()
@@ -178,7 +176,12 @@ def main(argv):
         g = rdflib.Graph()
         g.parse(input_ttl + ttl_file, format="ttl")
 
-        content = "";
+        # Dictionary to handle multiple instances of the same entity (when duplicate_instances is true)
+        instances = { }
+
+        # String variable storing the triples before writing a SIF file (either in archive or output_sif directory)
+        sif_content = ""
+
         # Travel through all causal relationships
         for sub, pred, obj in g:
             if str(pred) in relations.causal.values():
@@ -189,17 +192,36 @@ def main(argv):
                 predName = shortLabel(pred)
                 if use_labels:
                     predName = relations.causal.inv[str(pred)]
-                content += subName + "\t" + predName + "\t" + objName + "\n"
+                
+                if duplicate_instances:
+                    if subName in instances.keys():
+                        numbers = instances[subName]
+                        if sub not in numbers.keys():
+                            numbers[sub] = "_" + str(len(numbers) + 1)
+                        subName = subName + numbers[sub]
+                    else:
+                        numbers = { sub: "" }
+                        instances[subName] = numbers
+
+                    if objName in instances.keys():
+                        numbers = instances[objName]
+                        if obj not in numbers.keys():
+                            numbers[obj] = "_" + str(len(numbers) + 1)
+                        objName = objName + numbers[obj]
+                    else:
+                        numbers = { obj: "" }
+                        instances[objName] = numbers
+
+                sif_content += subName + "\t" + predName + "\t" + objName + "\n"
 
         if output_sif:
             f = open(output_sif + ttl_file[0:ttl_file.rfind(".")] + ".sif", 'w')
-            print('write to ' + output_sif + ttl_file[0:ttl_file.rfind(".")] + ".sif")
-            f.write(content)
+            f.write(sif_content)
             f.close()
 
         if archive:
             zpf = zipped_f.open("gocam-sif/" + ttl_file[0:ttl_file.rfind(".")] + ".sif", "w")
-            zpf.write(str.encode(content))
+            zpf.write(str.encode(sif_content))
             zpf.close()
 
         count += 1
