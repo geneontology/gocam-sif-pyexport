@@ -21,7 +21,7 @@ python ttl2sif.py -i /data/noctua-models/models/ -a gocam-sif.zip -l -d
 ## SIF files
 * Documentation about the [SIF Format](http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html)
 * SIF files can be viewed with [Cytoscape](https://cytoscape.org)
-* They can also be exported with Cytoscape as a web application as in the following [example](http://gocams-sif.s3-website-us-west-1.amazonaws.com/#/)
+* They can also be exported with Cytoscape as a web application as in the [cytocam example](http://cytocam.geneontology.cloud)
 
 ### View SIF in Cytoscape
 We advise using our [styling](#) in Cytoscape for a better rendering of the GO-CAM graphs.
