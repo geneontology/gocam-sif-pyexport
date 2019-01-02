@@ -7,7 +7,7 @@ from rdflib import BNode, Literal, URIRef
 from os import listdir
 from os.path import isfile, join
 
-
+import networkx as nx
 
 
 # LOADING CURIE UTIL (URI <-> CURIE)
@@ -90,6 +90,12 @@ def bestLabel(graph, node, use_labels):
 #        print(ontology_handler.getOntology(nodeSL).label(ontology_handler.getOntology(nodeSL).search(nodeSL)))
     return nodeName
 
+def geneNodes(nodes):
+    gn = []
+    for node in nodes:
+        if not ontology_handler.isOntology(node):
+            gn.append(node)
+    return gn
 
 def log(message):
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ":\t" , message)
@@ -108,10 +114,12 @@ def main(argv):
 
     # If true, any separate instance of a same node will be duplicated as ^2, ^3, ^4 etc, so it stays unique in SIF
     duplicate_instances = False
+
+    only_geneproduct = False
     
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:a:ld", ["input=", "output=", "archive=", "label", "duplicate"])
+        opts, args = getopt.getopt(argv, "hi:o:a:ldg", ["input=", "output=", "archive=", "label", "duplicate", "geneproduct"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -130,6 +138,8 @@ def main(argv):
             use_labels = True
         elif opt in ("-d", "--duplicate"):
             duplicate_instances = True
+        elif opt in ("-g", "--geneproduct"):
+            only_geneproduct = True
 
     if input_ttl is None:
         usage()
@@ -162,10 +172,12 @@ def main(argv):
         log("Archive:               \t" + archive)
     log("Use labels:            \t" + str(use_labels))
     log("Duplicate instances:   \t" + str(duplicate_instances))
+    log("Only Gene Products:    \t" + str(only_geneproduct))
 
     # Then start initializing CurieUtil and Ontologies
     initCurieUtil()
     ontology_handler.initOntologies()
+
 
     # List TTL files
     ttl_files = [f for f in listdir(input_ttl) if isfile(join(input_ttl, f))]
@@ -182,6 +194,9 @@ def main(argv):
         # String variable storing the triples before writing a SIF file (either in archive or output_sif directory)
         sif_content = ""
 
+        # Create temporary graph (1 / GO-CAM)
+        nxg = nx.Graph()
+
         # Travel through all causal relationships
         for sub, pred, obj in g:
             if str(pred) in relations.causal.values():
@@ -189,6 +204,7 @@ def main(argv):
                 subName = bestLabel(g, sub, use_labels)
                 objName = bestLabel(g, obj, use_labels)
 
+                # Double check: this should be retrieve from BFO or RO directly, but I didn't always got labels for some relations
                 predName = shortLabel(pred)
                 if use_labels:
                     predName = relations.causal.inv[str(pred)]
@@ -212,19 +228,36 @@ def main(argv):
                         numbers = { obj: "" }
                         instances[objName] = numbers
 
-                sif_content += subName + "\t" + predName + "\t" + objName + "\n"
+                if only_geneproduct:
+                    nxg.add_edge(subName, objName, relationship=predName)
+                else:
+                    sif_content += subName + "\t" + predName + "\t" + objName + "\n"
 
-        if output_sif:
-            f = open(output_sif + ttl_file[0:ttl_file.rfind(".")] + ".sif", 'w')
-            f.write(sif_content)
-            f.close()
+        # In this case, we create a graph containing only GP-GP relationships
+        if only_geneproduct:
+            # Further graph doc: https://networkx.github.io/documentation/networkx-1.10/tutorial/tutorial.html
+            ccs = nx.connected_components(nxg)
+            compid = 1
+            for cc in ccs:
+                gns = geneNodes(cc)
+                if len(gns) > 1:
+                    for i in range(0, len(gns)):
+                        sif_content += gns[i] + "\tcausally_related_to\t" + "cc" + str(compid) + "\n"
+                    compid += 1
+                else:
+                    sif_content += gns[0] + "\n"
 
-        if archive:
-            zpf = zipped_f.open("gocam-sif/" + ttl_file[0:ttl_file.rfind(".")] + ".sif", "w")
-            zpf.write(str.encode(sif_content))
-            zpf.close()
+        if len(sif_content) > 0:
+            if output_sif:
+                f = open(output_sif + ttl_file[0:ttl_file.rfind(".")] + ".sif", 'w')
+                f.write(sif_content)
+                f.close()
 
-        count += 1
+            if archive:
+                zpf = zipped_f.open("gocam-sif/" + ttl_file[0:ttl_file.rfind(".")] + ".sif", "w")
+                zpf.write(str.encode(sif_content))
+                zpf.close()
+            count += 1
 
     if archive:
         zipped_f.close()

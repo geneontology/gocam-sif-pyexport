@@ -130,3 +130,5 @@ sif/
 .vscode/
 .idea/
 .DS_Store
+neo.json
+neo.owl
