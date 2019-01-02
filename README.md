@@ -42,10 +42,10 @@ Whereas in this same example, all instances of a same entity (e.g. `Pear 1 Mmus`
 ![GO-CAM-SIF in CytoScape with at most one instance of an entity](images/GO-CAM-SIF-cytoscape.png)
 
 ### Gene Product - Gene Product relationships
-When specifying the `g` parameter, the original GO-CAM graph:
+The original GO-CAM graph:
 ![GO-CAM-SIF in CytoScape](images/GO-CAM-SIF-cytoscape-gocam.png)
 
-will be simplified in:
+can be simplified to highlight only GP-GP relationships using the `g` parameter:
 ![GO-CAM-SIF in CytoScape](images/GO-CAM-SIF-cytoscape-gp.png)
 
 ## Additional Notes
