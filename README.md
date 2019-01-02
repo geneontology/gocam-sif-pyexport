@@ -25,7 +25,7 @@ python ttl2sif.py -i /data/noctua-models/models/ -a gocam-sif.zip -l -d
 * They can also be exported with Cytoscape as a web application as in the [cytocam example](http://cytocam.geneontology.cloud)
 
 ### View SIF in Cytoscape
-We advise using our [styling](#) in Cytoscape for a better rendering of the GO-CAM graphs.
+We advise using our [styling](https://github.com/geneontology/gocam-sif-pyexport/blob/master/gocam-styles.xml) in Cytoscape for a better rendering of the GO-CAM graphs. You can import GO-CAM styles in Cytoscape by going to File -> Import -> Styles from file. When viewing your GO-CAM graph in Cytoscape, go in the "Style" tab of your control panel and select any of the GO-CAM style.
 
 ### CURIEs vs Labels
 In the following example, the `-l` parameter was used trying to show the labels of each entity:
