@@ -132,3 +132,5 @@ sif/
 .DS_Store
 neo.json
 neo.owl
+
+gocam-sif/

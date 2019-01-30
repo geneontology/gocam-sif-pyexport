@@ -22,6 +22,7 @@ def getOntology(curie):
         prefix = curie[0:curie.index("_")].lower()
     else:
         print("WARNING: " + curie + " has no detectable prefix (prefix:xxx or prefix_xxx)")
+        return None
     return ontologies[prefix]
 
 

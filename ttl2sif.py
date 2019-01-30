@@ -45,6 +45,9 @@ def labels(graph, node):
     return results
 
 def shortLabel(URI):
+    """
+    Returns either the CURIE or the value after the last / found
+    """
     short = curie.getCurie(URI)
     if not short:
         return URI[URI.rfind("/")+1:]
@@ -70,6 +73,8 @@ def bestLabel(graph, node, use_labels):
         if use_labels:
             if ontology_handler.isOntology(nodeSL):
                 onto = ontology_handler.getOntology(nodeSL)
+                if onto is None:
+                    print("ONTO is null !" , nodeSL, onto)
                 # FIX: ontobio needs to have a curie with ":", but ZFA (e.g. ZFA_0001109) are sent back with "_"
                 if "_" in nodeSL:
                     nodeSL = nodeSL.replace("_", ":")
@@ -140,6 +145,7 @@ def main(argv):
             duplicate_instances = True
         elif opt in ("-g", "--geneproduct"):
             only_geneproduct = True
+            use_labels = False # temporary hack
 
     if input_ttl is None:
         usage()
@@ -240,12 +246,13 @@ def main(argv):
             compid = 1
             for cc in ccs:
                 gns = geneNodes(cc)
+#                print(ttl_file , gns)
                 if len(gns) > 1:
                     for i in range(0, len(gns)):
                         sif_content += gns[i] + "\tcausally_related_to\t" + "cc" + str(compid) + "\n"
                     compid += 1
-                else:
-                    sif_content += gns[0] + "\n"
+#                elif len(gns) > 0:
+#                    sif_content += gns[0] + "\n"
 
         if len(sif_content) > 0:
             if output_sif:
@@ -267,3 +274,17 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+    # ontology_handler.initOntologies()
+    # goterm = "GO:0048489"
+    # ont = ontology_handler.getOntology(goterm)
+    # print("search: " , ont.search(goterm))
+    # print("node: " , ont.node(goterm))
+    # print("type: " , ont.get_node_type(goterm))
+    # print("definition: ", ont.text_definition(goterm))
+    # print("is_obsolete: ", ont.is_obsolete(goterm))
+    # print("replaced_by: " , ont.replaced_by(goterm))
+    # print("logical_definition: ", ont.logical_definitions(goterm))
+    # print("synonyms: " , ont.synonyms(goterm))
+    # print("label: " , ont.label(goterm))
+    # print("xrefs: " , ont.xrefs(goterm))
+
