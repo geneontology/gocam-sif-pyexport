@@ -106,7 +106,7 @@ def log(message):
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ":\t" , message)
 
 def usage():
-    print('ttl2sif.py -i <input:directory> [-o <output:directory> -a <output:archive> -l]\n')
+    print('ttl2count.py -i <input:directory>\n')
 
 
 def main(argv):
@@ -135,50 +135,17 @@ def main(argv):
             sys.exit()
         elif opt in ("-i", "--input"):
             input_ttl = arg
-        elif opt in ("-o", "--output"):
-            output_sif = arg
-        elif opt in ("-a", "--archive"):
-            archive = arg
-        elif opt in ("-l", "--label"):
-            use_labels = True
-        elif opt in ("-d", "--duplicate"):
-            duplicate_instances = True
-        elif opt in ("-g", "--geneproduct"):
-            only_geneproduct = True
-            use_labels = False # temporary hack
 
     if input_ttl is None:
         usage()
         sys.exit(1)
 
-    if not os.path.exists(input_ttl):
-        print("Input TTL '" + input_ttl + "' is not a directory or does not exist\n")
-        sys.exit(1)
-
-    if not output_sif and not archive:
-        print("You must define either the output_sif directory or the archive parameter\n")
-        sys.exit(1)        
-
     # Prepare parameters
     if not input_ttl.endswith("/"):
         input_ttl += "/"
-    if output_sif and not output_sif.endswith("/"):
-        output_sif += "/"
-    if output_sif and not os.path.exists(output_sif):
-        os.makedirs(output_sif)
-    if archive and not archive.endswith(".zip"):
-        archive += ".zip"
-        zipped_f = zipfile.ZipFile(archive, 'w')
 
     # Verbose on parameters
     log("Input TTL:             \t" + input_ttl)
-    if output_sif:
-        log("Output SIF:            \t" + output_sif)
-    if archive:
-        log("Archive:               \t" + archive)
-    log("Use labels:            \t" + str(use_labels))
-    log("Duplicate instances:   \t" + str(duplicate_instances))
-    log("Only Gene Products:    \t" + str(only_geneproduct))
 
     # Then start initializing CurieUtil and Ontologies
     initCurieUtil()
@@ -203,88 +170,14 @@ def main(argv):
         # Create temporary graph (1 / GO-CAM)
         nxg = nx.Graph()
 
+        causal_count = 0
         # Travel through all causal relationships
         for sub, pred, obj in g:
-            if str(pred) in relations.all.values():
+            if str(pred) in relations.true_causal.values():
+                causal_count += 1
+        print(ttl_file + "\t" +  str(causal_count))
 
-                subName = bestLabel(g, sub, use_labels)
-                objName = bestLabel(g, obj, use_labels)
-
-                # Double check: this should be retrieve from BFO or RO directly, but I didn't always got labels for some relations
-                predName = shortLabel(pred)
-                if use_labels:
-                    predName = relations.all.inv[str(pred)]
-                
-                if duplicate_instances:
-                    if subName in instances.keys():
-                        numbers = instances[subName]
-                        if sub not in numbers.keys():
-                            numbers[sub] = "_" + str(len(numbers) + 1)
-                        subName = subName + numbers[sub]
-                    else:
-                        numbers = { sub: "" }
-                        instances[subName] = numbers
-
-                    if objName in instances.keys():
-                        numbers = instances[objName]
-                        if obj not in numbers.keys():
-                            numbers[obj] = "_" + str(len(numbers) + 1)
-                        objName = objName + numbers[obj]
-                    else:
-                        numbers = { obj: "" }
-                        instances[objName] = numbers
-
-                if only_geneproduct:
-                    nxg.add_edge(subName, objName, relationship=predName)
-                else:
-                    sif_content += subName + "\t" + predName + "\t" + objName + "\n"
-
-        # In this case, we create a graph containing only GP-GP relationships
-        if only_geneproduct:
-            # Further graph doc: https://networkx.github.io/documentation/networkx-1.10/tutorial/tutorial.html
-            ccs = nx.connected_components(nxg)
-            compid = 1
-            for cc in ccs:
-                gns = geneNodes(cc)
-#                print(ttl_file , gns)
-                if len(gns) > 1:
-                    for i in range(0, len(gns)):
-                        sif_content += gns[i] + "\tcausally_related_to\t" + "cc" + str(compid) + "\n"
-                    compid += 1
-#                elif len(gns) > 0:
-#                    sif_content += gns[0] + "\n"
-
-        if len(sif_content) > 0:
-            if output_sif:
-                f = open(output_sif + ttl_file[0:ttl_file.rfind(".")] + ".sif", 'w')
-                f.write(sif_content)
-                f.close()
-
-            if archive:
-                zpf = zipped_f.open("gocam-sif/" + ttl_file[0:ttl_file.rfind(".")] + ".sif", "w")
-                zpf.write(str.encode(sif_content))
-                zpf.close()
-            count += 1
-
-    if archive:
-        zipped_f.close()
-
-    print(count , " TTL files exported to SIF")
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-    # ontology_handler.initOntologies()
-    # goterm = "GO:0048489"
-    # ont = ontology_handler.getOntology(goterm)
-    # print("search: " , ont.search(goterm))
-    # print("node: " , ont.node(goterm))
-    # print("type: " , ont.get_node_type(goterm))
-    # print("definition: ", ont.text_definition(goterm))
-    # print("is_obsolete: ", ont.is_obsolete(goterm))
-    # print("replaced_by: " , ont.replaced_by(goterm))
-    # print("logical_definition: ", ont.logical_definitions(goterm))
-    # print("synonyms: " , ont.synonyms(goterm))
-    # print("label: " , ont.label(goterm))
-    # print("xrefs: " , ont.xrefs(goterm))
-
