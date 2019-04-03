@@ -134,3 +134,5 @@ neo.json
 neo.owl
 
 gocam-sif/
+
+*.zip
