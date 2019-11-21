@@ -67,9 +67,9 @@ def types(graph, node, includeIndividual):
 
 def bestLabel(graph, node, use_labels):
     nodeTypes = types(graph, node, False)
-    nodeSL = shortLabel(nodeTypes[0])
-    nodeName = nodeSL
     if nodeTypes:
+        nodeSL = shortLabel(nodeTypes[0])
+        nodeName = nodeSL
         if use_labels:
             if ontology_handler.isOntology(nodeSL):
                 onto = ontology_handler.getOntology(nodeSL)
