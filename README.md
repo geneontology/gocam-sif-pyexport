@@ -1,6 +1,12 @@
 # GOCAM export to SIF
 Export GO-CAMs to SIF in Python
 
+## Installation
+
+```
+pip install -r requirements.txt
+```
+
 ## Usage
 ```
 python ttl2sif.py -i <input:directory> [-o <output:directory> -a <output:archive> -l -d -g]
