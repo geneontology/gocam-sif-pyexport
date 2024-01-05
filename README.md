@@ -1,3 +1,5 @@
+# WARNING: THIS REPO IS NOW ARCHIVED
+
 # GOCAM export to SIF
 Export GO-CAMs to SIF in Python
 
